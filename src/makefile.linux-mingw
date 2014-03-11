@@ -5,7 +5,7 @@
 DEPSDIR:=/usr/i686-w64-mingw32
 
 CC := i686-w64-mingw32-gcc
-CXX := i686-w64-mingw32-g++
+CXX := i686-w64-mingw32-cpp
 
 USE_UPNP:=0
 USE_IPV6:=1
@@ -58,6 +58,7 @@ HEADERS = $(wildcard *.h)
 
 OBJS= \
     leveldb/libleveldb.a \
+    obj/auxpow.o \
     obj/alert.o \
     obj/version.o \
     obj/checkpoints.o \
@@ -96,7 +97,7 @@ OBJS_SSE2= obj/scrypt-sse2.o
 OBJS += $(OBJS_SSE2)
 endif
 
-all: litecoind.exe
+all: orgcoind.exe
 
 DEFS += -I"$(CURDIR)/leveldb/include"
 DEFS += -I"$(CURDIR)/leveldb/helpers"
@@ -109,28 +110,28 @@ version.cpp: obj/build.h
 DEFS += -DHAVE_BUILD_INFO
 
 obj/%-sse2.o: %-sse2.cpp
-	$(CXX) -c $(xCXXFLAGS) -msse2 -mstackrealign -o $@ $<
+	$(CXX) $(xCXXFLAGS) -msse2 -mstackrealign -o $@ $<
 
 obj/%.o: %.cpp $(HEADERS)
-	$(CXX) -c $(xCXXFLAGS) -o $@ $<
+	$(CXX) $(xCXXFLAGS) -o $@ $<
 
-litecoind.exe: $(OBJS:obj/%=obj/%)
+orgcoind.exe: $(OBJS:obj/%=obj/%)
 	$(CXX) $(xCXXFLAGS) $(xLDFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS)
 
 TESTOBJS := $(patsubst test/%.cpp,obj-test/%.o,$(wildcard test/*.cpp))
 
 obj-test/%.o: test/%.cpp $(HEADERS)
-	$(CXX) -c $(TESTDEFS) $(xCXXFLAGS) -o $@ $<
+	$(CXX) $(TESTDEFS) $(xCXXFLAGS) -o $@ $<
 
-test_litecoin.exe: $(TESTOBJS) $(filter-out obj/init.o,$(OBJS:obj/%=obj/%))
+test_orgcoin.exe: $(TESTOBJS) $(filter-out obj/init.o,$(OBJS:obj/%=obj/%))
 	$(CXX) $(xCXXFLAGS) $(xLDFLAGS) -o $@ $(LIBPATHS) $^ -lboost_unit_test_framework-mt-s $(LIBS)
 
 
 clean:
 	-rm -f obj/*.o
-	-rm -f litecoind.exe
+	-rm -f orgcoind.exe
 	-rm -f obj-test/*.o
-	-rm -f test_litecoin.exe
+	-rm -f test_orgcoin.exe
 	-rm -f obj/build.h
 	cd leveldb && TARGET_OS=OS_WINDOWS_CROSSCOMPILE $(MAKE) clean && cd ..
 

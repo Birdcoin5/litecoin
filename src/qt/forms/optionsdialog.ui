@@ -23,7 +23,7 @@
       <enum>QTabWidget::North</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="tabMain">
       <attribute name="title">
@@ -82,7 +82,7 @@
           <string>Automatically start Litecoin after logging in to the system.</string>
          </property>
          <property name="text">
-          <string>&amp;Start Litecoin on system login</string>
+          <string>&amp;Start Orgcoin on system login</string>
          </property>
         </widget>
        </item>
